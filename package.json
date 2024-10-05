@@ -1,0 +1,22 @@
+{
+  "name": "3105_node-exercise",
+  "version": "1.0.0",
+  "description": "backend exercise for 3105 appdev",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChanAbay-abay/3105_node-exercise.git"
+  },
+  "author": "ChanAbay-abay",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ChanAbay-abay/3105_node-exercise/issues"
+  },
+  "homepage": "https://github.com/ChanAbay-abay/3105_node-exercise#readme",
+  "dependencies": {
+    "bash": "^0.0.1"
+  }
+}
