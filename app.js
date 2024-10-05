@@ -1,12 +1,20 @@
 const express = require("express");
 const userRoutes = require("./routes/user");
 const loggingMiddleware = require("./middleware/loggingMiddleware");
+const rateLimiter = require("./middleware/rateLimiter");
 
 const app = express();
 
 // middleware
 app.use(express.json()); // parsing JSON requests
 app.use(loggingMiddleware); //for logging
+app.use(rateLimiter);
+app.use((req, res, next) => {
+  console.log(
+    `Request count: ${req.rateLimit.current}, Max: ${req.rateLimit.limit}`
+  );
+  next();
+});
 
 // routes
 app.use("/user", userRoutes);
