@@ -2,9 +2,10 @@ const userModel = require("../models/userModel");
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = "your-secret-key";
+const bcrypt = require("bcrypt");
 
 //registers new user
-exports.register = (req, res) => {
+exports.register = async (req, res) => {
   const schema = Joi.object({
     username: Joi.string().min(3).required(),
     password: Joi.string().min(6).required(),
@@ -20,18 +21,25 @@ exports.register = (req, res) => {
   // Create user if validation passes
   console.log("Passed validation, creating user");
   const { username, password, email } = req.body;
-  const user = userModel.createUser(username, password, email);
+  const user = await userModel.createUser(username, password, email); // Await here
 
   console.log("User created:", user);
   res.status(201).json({ message: "User registered successfully", user });
 };
 
 //login
-exports.login = (req, res) => {
+exports.login = async (req, res) => {
   const { username, password } = req.body;
   const user = userModel.findUser(username);
 
-  if (!user || user.password !== password) {
+  if (!user) {
+    return res.status(401).json({ message: "Invalid credentials" });
+  }
+
+  // Compare the provided password with the stored hashed password
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
     return res.status(401).json({ message: "Invalid credentials" });
   }
 

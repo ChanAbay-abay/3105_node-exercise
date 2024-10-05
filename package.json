@@ -18,6 +18,7 @@
   "homepage": "https://github.com/ChanAbay-abay/3105_node-exercise#readme",
   "dependencies": {
     "bash": "^0.0.1",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "express": "^4.21.0",
     "joi": "^17.13.3",
