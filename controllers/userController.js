@@ -12,11 +12,17 @@ exports.register = (req, res) => {
   });
 
   const { error } = schema.validate(req.body);
-  if (error) return res.status(400).json({ message: error.details[0].message });
+  if (error) {
+    console.error("Validation error:", error.details[0].message);
+    return res.status(400).json({ message: error.details[0].message });
+  }
 
   // Create user if validation passes
+  console.log("Passed validation, creating user");
   const { username, password, email } = req.body;
   const user = userModel.createUser(username, password, email);
+
+  console.log("User created:", user);
   res.status(201).json({ message: "User registered successfully", user });
 };
 

@@ -2,10 +2,14 @@ let users = []; // You can also read/write to a JSON file
 
 //creates new user
 exports.createUser = (username, password, email) => {
-  const id = users.length + 1;
-  const user = { id, username, password, email };
-  users.push(user);
-  return user;
+  const newUser = {
+    id: users.length + 1,
+    username,
+    password,
+    email,
+  };
+  users.push(newUser);
+  return newUser;
 };
 
 //find user by username

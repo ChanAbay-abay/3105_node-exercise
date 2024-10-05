@@ -1,16 +1,15 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const userRoutes = require("./routes/user");
 
 const app = express();
 
-//middleware
-app.use(bodyParser.json());
+// Middleware: use built-in express JSON parser
+app.use(express.json()); // This will parse incoming JSON requests
 
-//routes
+// Routes
 app.use("/user", userRoutes);
 
-//start
+// Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
