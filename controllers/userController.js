@@ -2,7 +2,7 @@ const userModel = require("../models/userModel");
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const SECRET_KEY = "your-secret-key"; // make sure to use the same key in authMiddleware
+const SECRET_KEY = "your-secret-key";
 
 // registers new user
 exports.register = async (req, res) => {
@@ -30,7 +30,8 @@ exports.register = async (req, res) => {
 // login
 exports.login = async (req, res) => {
   const { username, password } = req.body;
-  const user = userModel.findUser(username);
+
+  const user = await userModel.findUser(username);
 
   if (!user) {
     return res.status(401).json({ message: "Invalid credentials" });
@@ -43,11 +44,6 @@ exports.login = async (req, res) => {
     return res.status(401).json({ message: "Invalid credentials" });
   }
 
-  // store user info in session
-  req.session.userId = user.id;
-  req.session.username = user.username;
-
-  // Generate JWT token
   const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, {
     expiresIn: "1h",
   });
@@ -71,10 +67,16 @@ exports.logout = (req, res) => {
 
 // get profile (reqs auth)
 exports.getProfile = (req, res) => {
-  if (!req.session.userId) {
+  const token = req.headers["authorization"];
+  if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const user = { id: req.session.userId, username: req.session.username };
-  res.json({ message: "User profile", user });
+  try {
+    const decoded = jwt.verify(token.split(" ")[1], SECRET_KEY);
+    const user = { id: decoded.id, username: decoded.username };
+    res.json({ message: "User profile", user });
+  } catch (error) {
+    res.status(401).json({ message: "Invalid token" });
+  }
 };

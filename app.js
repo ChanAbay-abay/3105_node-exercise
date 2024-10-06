@@ -12,7 +12,10 @@ app.use(
     secret: "your-secret-key",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false },
+    cookie: {
+      secure: false,
+      maxAge: 30 * 60 * 1000, //logs out after 30 mins
+    },
   })
 );
 
