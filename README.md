@@ -42,7 +42,7 @@ This is a simple user authentication API built with Node.js and Express.js. It i
 4. Start the server:
 
    ```bash
-   npm start
+   npx node app.js
    ```
 
    The server will run on `http://localhost:3000`.
