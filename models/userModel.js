@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 
 const usersFilePath = path.join(__dirname, "../data/users.json");
 
-//loads users from users.json
 let users = [];
 const loadUsers = () => {
   if (fs.existsSync(usersFilePath)) {
@@ -13,7 +12,6 @@ const loadUsers = () => {
   }
 };
 
-//saves users to users.json
 const saveUsers = () => {
   fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2));
 };

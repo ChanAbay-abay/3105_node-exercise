@@ -2,7 +2,11 @@ const userModel = require("../models/userModel");
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const SECRET_KEY = "your-secret-key";
+const dotenv = require("dotenv");
+
+// load environment variables from .env file
+dotenv.config();
+const SECRET_KEY = process.env.SECRET_KEY;
 
 // registers new user
 exports.register = async (req, res) => {
@@ -18,55 +22,56 @@ exports.register = async (req, res) => {
     return res.status(400).json({ message: error.details[0].message });
   }
 
-  // creates user if validation completes
   console.log("Passed validation, creating user");
   const { username, password, email } = req.body;
-  const user = await userModel.createUser(username, password, email);
-
-  console.log("User created:", user);
-  res.status(201).json({ message: "User registered successfully", user });
+  try {
+    const user = await userModel.createUser(username, password, email);
+    console.log("User created:", user);
+    res.status(201).json({ message: "User registered successfully", user });
+  } catch (err) {
+    console.error("Error creating user:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 // login
 exports.login = async (req, res) => {
   const { username, password } = req.body;
 
-  const user = await userModel.findUser(username);
+  try {
+    const user = await userModel.findUser(username);
 
-  if (!user) {
-    return res.status(401).json({ message: "Invalid credentials" });
-  }
-
-  // matches password with stored hashed password
-  const isMatch = await bcrypt.compare(password, user.password);
-
-  if (!isMatch) {
-    return res.status(401).json({ message: "Invalid credentials" });
-  }
-
-  const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, {
-    expiresIn: "1h",
-  });
-
-  res.json({
-    message: "Login successful",
-    user: { id: user.id, username: user.username },
-    token: token,
-  });
-};
-
-// logout
-exports.logout = (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ message: "Could not log out" });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
-    res.json({ message: "Logged out successfully" });
-  });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, username: user.username },
+      SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    res.json({
+      message: "Login successful",
+      user: { id: user.id, username: user.username },
+      token: token,
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
-// get profile (reqs auth)
-exports.getProfile = (req, res) => {
+// gets profile (requires auth)
+exports.getProfile = async (req, res) => {
   const token = req.headers["authorization"];
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
