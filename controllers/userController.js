@@ -18,10 +18,10 @@ exports.register = async (req, res) => {
     return res.status(400).json({ message: error.details[0].message });
   }
 
-  // Create user if validation passes
+  //creates user if validation completes
   console.log("Passed validation, creating user");
   const { username, password, email } = req.body;
-  const user = await userModel.createUser(username, password, email); // Await here
+  const user = await userModel.createUser(username, password, email);
 
   console.log("User created:", user);
   res.status(201).json({ message: "User registered successfully", user });
@@ -36,7 +36,7 @@ exports.login = async (req, res) => {
     return res.status(401).json({ message: "Invalid credentials" });
   }
 
-  // Compare the provided password with the stored hashed password
+  //matches password with stored hashed password
   const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {

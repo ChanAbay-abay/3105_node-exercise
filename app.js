@@ -6,8 +6,8 @@ const rateLimiter = require("./middleware/rateLimiter");
 const app = express();
 
 // middleware
-app.use(express.json()); // parsing JSON requests
-app.use(loggingMiddleware); //for logging
+app.use(express.json());
+app.use(loggingMiddleware);
 app.use(rateLimiter);
 app.use((req, res, next) => {
   console.log(
