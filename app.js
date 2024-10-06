@@ -2,8 +2,19 @@ const express = require("express");
 const userRoutes = require("./routes/user");
 const loggingMiddleware = require("./middleware/loggingMiddleware");
 const rateLimiter = require("./middleware/rateLimiter");
+const session = require("express-session");
 
 const app = express();
+
+// session config
+app.use(
+  session({
+    secret: "your-secret-key",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  })
+);
 
 // middleware
 app.use(express.json());
