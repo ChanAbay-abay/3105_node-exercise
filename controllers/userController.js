@@ -70,18 +70,17 @@ exports.login = async (req, res) => {
   }
 };
 
+// log out user
+exports.logout = (req, res) => {
+  res.json({ message: "Logout successful" });
+};
+
 // gets profile (requires auth)
 exports.getProfile = async (req, res) => {
-  const token = req.headers["authorization"];
-  if (!token) {
+  // req.user should have the user information if the token is valid
+  if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  try {
-    const decoded = jwt.verify(token.split(" ")[1], SECRET_KEY);
-    const user = { id: decoded.id, username: decoded.username };
-    res.json({ message: "User profile", user });
-  } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
-  }
+  res.json({ message: "User profile", user: req.user });
 };
